@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:appwrite/appwrite.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/date_symbols.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'theme.dart';
+import 'widgets/login_widget.dart';
+import 'state.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  initializeDateFormatting('de_DE', null).then((_) {
+    runApp(MyTodos());
+  });
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyTodos extends StatelessWidget {
+  const MyTodos({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: Scaffold(appBar: AppBar(), body: Column()));
+    return ChangeNotifierProvider(
+        create: (context) => SessionState(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: getTheme(),
+          home: const LoginWidget(
+            title: "Login",
+          ),
+        ));
   }
 }

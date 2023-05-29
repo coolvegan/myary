@@ -3,7 +3,6 @@ description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -21,6 +20,7 @@ version: 1.0.0+1
 environment:
   sdk: '>=2.19.6 <3.0.0'
 
+
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
@@ -31,11 +31,20 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   appwrite: ^9.0.0
+  json_annotation: ^4.8.1
+  provider: ^6.0.5
+  appwrite_auth_kit: ^0.8.0
+  shared_preferences: ^2.1.1
+  crypto: ^3.0.3
+  encrypt: ^5.0.1
+  rename: ^2.1.1
+  rename_app_plus: ^1.2.1
+  intl: ^0.18.1
+  flutter_native_timezone: ^1.0.4
 
 dev_dependencies:
   flutter_test:
