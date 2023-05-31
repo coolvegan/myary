@@ -1,10 +1,12 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as models;
+import 'package:appwrite/models.dart';
 import 'package:appwrite_test/backend.dart';
 
 class AuthService {
   static final AuthService _authService = AuthService._internal();
   final Account _account = Account(Backend.instance.client);
+  Jwt? jwt;
   //models.User war in Appwrite 8 models.Account
   Future<models.User> signUp(
       {String? name, required String email, required String password}) async {
@@ -27,6 +29,7 @@ class AuthService {
       email: email,
       password: password,
     );
+    _account.createJWT().then((value) => print(value.jwt));
     return _account.get();
   }
 

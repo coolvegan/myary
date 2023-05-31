@@ -6,6 +6,7 @@ import 'package:appwrite_test/services/todos.dart';
 import 'package:appwrite_test/theme.dart';
 import 'package:appwrite_test/widgets/todo_widget.dart';
 import 'package:appwrite_test/constants.dart' as constants;
+import 'package:flutter/rendering.dart';
 import 'backend.dart';
 import 'model/todo_dto.dart';
 import 'widgets/appbar_widget.dart';
@@ -53,6 +54,7 @@ class _ShowTodosState extends State<ShowTodos> {
         debugShowCheckedModeBanner: false,
         theme: getTheme(),
         home: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             title: const Text(
@@ -80,7 +82,7 @@ class _ShowTodosState extends State<ShowTodos> {
                 },
               ),
               SizedBox(
-                  height: 800,
+                  height: MediaQuery.of(context).size.height - 200,
                   child: ListView.builder(
                       padding: const EdgeInsets.all(8),
                       itemCount: todolist.length,

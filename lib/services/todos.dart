@@ -47,13 +47,20 @@ class TodosService {
     return documentList.documents.map((e) => TodoDto.fromMap(e.data)).toList();
   }
 
-  Future<TodoDto> create({required String content}) async {
+  Future<TodoDto> create(
+      {required String content, int numberUntilReady = 1}) async {
     User user = await AuthService().getUserId();
     final document = await _databases.createDocument(
       databaseId: constants.appwriteDatabaseId,
       collectionId: constants.appwriteCollectionId,
       documentId: ID.unique(),
-      data: {"content": content, "isComplete": false, "userId": user.$id},
+      data: {
+        "content": content,
+        "isComplete": false,
+        "userId": user.$id,
+        "numberOfExecution": numberUntilReady,
+        "numberUntilReady": 1
+      },
     );
 
     return TodoDto.fromMap(document.data);

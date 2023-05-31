@@ -1,20 +1,25 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
+
+import 'package:appwrite_test/constants.dart' as constants;
 import 'package:appwrite_test/services/happiness.dart';
 import 'package:appwrite_test/services/todos.dart';
-import 'package:flutter/material.dart';
 import '../model/todo_dto.dart';
-import 'package:appwrite_test/constants.dart' as constants;
 
 class TodoWidget extends StatefulWidget {
   TodoDto todo;
 
-  TodoWidget({super.key, required this.todo});
+  TodoWidget({
+    Key? key,
+    required this.todo,
+  }) : super(key: key);
 
   @override
   State<TodoWidget> createState() => _TodoWidgetState();
 }
 
 class _TodoWidgetState extends State<TodoWidget> {
-  TodoDto? last;
+  String selectedValue = "1";
   TodosService todosservice = TodosService();
   changeCheckbox(value) {
     setState(() {
@@ -31,10 +36,52 @@ class _TodoWidgetState extends State<TodoWidget> {
   }
 
   moveToHappynessDiary() {
+    var prefix = "";
     var text = widget.todo.content;
+    if (widget.todo.numberOfExecution != null &&
+        widget.todo.numberUntilReady != null) {
+      prefix = widget.todo.numberOfExecution!.toString() +
+          " / " +
+          widget.todo.numberUntilReady!.toString() +
+          " ";
+    }
     HappynessService happynessService = HappynessService();
-    happynessService.create(text: text);
+    happynessService.create(text: prefix != "" ? prefix + " " : "" + text);
     todosservice.delete(id: widget.todo.id);
+  }
+
+  void todoDoneHelper(TodoDto todoDto) {
+    if (todoDto.numberOfExecution != null && todoDto.numberUntilReady != null) {
+      if (todoDto.isComplete &&
+          todoDto.numberOfExecution! == todoDto.numberUntilReady!) {
+        todoDto.numberOfExecution = todoDto.numberOfExecution! - 1;
+        todoDto.isComplete = false;
+      } else if (todoDto.numberOfExecution! < todoDto.numberUntilReady!) {
+        todoDto.numberOfExecution = todoDto.numberOfExecution! + 1;
+        if (todoDto.numberOfExecution! == todoDto.numberUntilReady!) {
+          todoDto.isComplete = true;
+        }
+      }
+    }
+
+    updateTodoEntry();
+  }
+
+  String widgetFormatHelper(TodoDto todoDto) {
+    if (todoDto.numberOfExecution != null &&
+        todoDto.numberUntilReady != null &&
+        todoDto.numberUntilReady! > 1) {
+      int repetitionLeft =
+          todoDto.numberUntilReady! - todoDto.numberOfExecution!;
+
+      String result = todoDto.numberOfExecution!.toString() +
+          " / " +
+          todoDto.numberUntilReady!.toString() +
+          " " +
+          todoDto.content;
+      return result;
+    }
+    return todoDto.content;
   }
 
   @override
@@ -60,7 +107,7 @@ class _TodoWidgetState extends State<TodoWidget> {
                 },
                 child: InkWell(
                   onTap: () {
-                    changeCheckbox(!widget.todo.isComplete);
+                    changeCheckbox(widget.todo.isComplete);
                     updateTodoEntry();
                   },
                   onLongPress: () {
@@ -71,7 +118,7 @@ class _TodoWidgetState extends State<TodoWidget> {
                     children: [
                       Flexible(
                         child: Text(
-                          widget.todo.content,
+                          widgetFormatHelper(widget.todo),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.normal,
@@ -81,8 +128,7 @@ class _TodoWidgetState extends State<TodoWidget> {
                       Checkbox(
                           value: widget.todo.isComplete,
                           onChanged: (bool? value) {
-                            changeCheckbox(value);
-                            updateTodoEntry();
+                            todoDoneHelper(widget.todo);
                           })
                     ],
                   ),
@@ -100,13 +146,30 @@ class _TodoWidgetState extends State<TodoWidget> {
         builder: (context) {
           return AlertDialog(
             title: const Text(constants.textUpdateTodo),
-            content: TextFormField(
-              initialValue: text,
-              onChanged: (value) {
-                widget.todo.content = value;
-              },
-              autofocus: true,
-              decoration: InputDecoration(hintText: text),
+            content: Column(
+              children: <Widget>[
+                TextFormField(
+                  initialValue: text,
+                  onChanged: (value) {
+                    widget.todo.content = value;
+                  },
+                  autofocus: true,
+                  decoration: InputDecoration(hintText: text),
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                      suffix: GestureDetector(
+                    child: Text(constants.textTodoUntilFinished),
+                  )),
+                  initialValue: widget.todo.numberUntilReady.toString(),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedValue = value;
+                    });
+                  },
+                ),
+              ],
             ),
             actions: <Widget>[
               MaterialButton(
@@ -124,6 +187,8 @@ class _TodoWidgetState extends State<TodoWidget> {
                 textColor: Colors.white,
                 child: const Text(constants.textOkay),
                 onPressed: () {
+                  int? count = int.tryParse(selectedValue);
+                  widget.todo.numberUntilReady = count!;
                   updateTodoEntry();
                   Navigator.pop(context);
                 },
