@@ -26,6 +26,7 @@ const textUpdateTodo = "Todo bearbeiten";
 const textUpdateHappynessDiary = "Todo bearbeiten";
 const textEnterEmail = "Bitte Email Adresse eingeben";
 const textTodoUntilFinished = "Wie oft willst du die Todo ausführen?";
+const textTodoHowOftenExecuted = "Wie oft hast du die Todo bereits ausgeführt?";
 
 //execute setupenv.sh to set $MYARY_SECRET Environment Variable
 abstract class Constants {

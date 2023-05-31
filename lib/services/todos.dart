@@ -58,8 +58,8 @@ class TodosService {
         "content": content,
         "isComplete": false,
         "userId": user.$id,
-        "numberOfExecution": numberUntilReady,
-        "numberUntilReady": 1
+        "numberOfExecution": 0,
+        "numberUntilReady": numberUntilReady
       },
     );
 

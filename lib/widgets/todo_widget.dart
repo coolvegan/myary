@@ -61,6 +61,11 @@ class _TodoWidgetState extends State<TodoWidget> {
         if (todoDto.numberOfExecution! == todoDto.numberUntilReady!) {
           todoDto.isComplete = true;
         }
+      } else {
+        //Für den Sonderfall das beide Todos gleich sind und isComplete immernoch false ist.
+        if (todoDto.numberOfExecution! == todoDto.numberUntilReady!) {
+          todoDto.isComplete = true;
+        }
       }
     }
 
@@ -101,7 +106,18 @@ class _TodoWidgetState extends State<TodoWidget> {
             fit: StackFit.expand,
             children: [
               GestureDetector(
-                onDoubleTap: () => {print("double tap")},
+                onDoubleTap: () => {
+                  if (widget.todo.numberOfExecution != null &&
+                      widget.todo.numberUntilReady != null)
+                    {
+                      if (widget.todo.numberUntilReady! > 1 &&
+                          widget.todo.numberOfExecution! >= 1)
+                        {
+                          widget.todo.numberOfExecution =
+                              widget.todo.numberOfExecution! - 1
+                        }
+                    }
+                },
                 onHorizontalDragEnd: (details) {
                   _displayTodoDeleteDialog(context, widget.todo.content);
                 },
@@ -159,7 +175,7 @@ class _TodoWidgetState extends State<TodoWidget> {
                 TextFormField(
                   decoration: InputDecoration(
                       suffix: GestureDetector(
-                    child: Text(constants.textTodoUntilFinished),
+                    child: const Text(constants.textTodoUntilFinished),
                   )),
                   initialValue: widget.todo.numberUntilReady.toString(),
                   keyboardType: TextInputType.number,
@@ -188,6 +204,17 @@ class _TodoWidgetState extends State<TodoWidget> {
                 child: const Text(constants.textOkay),
                 onPressed: () {
                   int? count = int.tryParse(selectedValue);
+                  if (widget.todo.numberUntilReady != null) {
+                    if (widget.todo.numberUntilReady! < count!) {
+                      widget.todo.isComplete = false;
+                    }
+                  }
+                  if (widget.todo.numberOfExecution != null) {
+                    if (widget.todo.numberOfExecution! >
+                        widget.todo.numberUntilReady!) {
+                      widget.todo.numberOfExecution = count! - 1;
+                    }
+                  }
                   widget.todo.numberUntilReady = count!;
                   updateTodoEntry();
                   Navigator.pop(context);
